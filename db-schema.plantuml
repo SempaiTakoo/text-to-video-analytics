@@ -1,0 +1,40 @@
+@startuml db-schema
+
+class creators {
+    +id : uuid
+    --
+}
+
+class videos {
+    +id : uuid
+    --
+    creator_id : uuid
+    video_created_at : timestamptz
+    views_count : bigint
+    likes_count : bigint
+    reports_count : bigint
+    comments_count : bigint
+    created_at : timestamptz
+    updated_at : timestamptz
+}
+
+class snapshots {
+    +id : uuid
+    --
+    video_id : uuid
+    views_count : bigint
+    likes_count : bigint
+    reports_count : bigint
+    comments_count : bigint
+    delta_views_count : bigint
+    delta_likes_count : bigint
+    delta_reports_count : bigint
+    delta_comments_count : bigint
+    created_at : timestamptz
+    updated_at : timestamptz
+}
+
+creators ||--o{ videos : "owns"
+videos ||--o{ snapshots : "has"
+
+@enduml

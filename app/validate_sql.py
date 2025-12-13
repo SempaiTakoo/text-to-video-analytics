@@ -15,7 +15,7 @@ FORBIDDEN_EXPRESSIONS = (
 )
 
 
-def is_read_only_sql(sql: str, dialect: str = "postgres"):
+def is_read_only_sql(sql: str, dialect: str = "postgres") -> bool:
     try:
         parsed = sqlglot.parse_one(sql, read=dialect)
     except sqlglot.errors.ParseError:

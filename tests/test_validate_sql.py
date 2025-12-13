@@ -27,7 +27,8 @@ WITH ranked_orders AS (
            order_id,
            total_amount,
            order_date,
-           RANK() OVER (PARTITION BY customer_id ORDER BY total_amount DESC) as rank_by_amount
+           RANK() OVER (PARTITION BY customer_id ORDER BY total_amount DESC)
+           as rank_by_amount
     FROM orders
     WHERE EXTRACT(YEAR FROM order_date) = 2023
 )

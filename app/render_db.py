@@ -1,9 +1,11 @@
+from typing import Any
+
 import sqlalchemy
 
 from app.db import metadata
 
 
-def render_column_description(column: sqlalchemy.Column) -> str:
+def render_column_description(column: sqlalchemy.Column[Any]) -> str:
     pk = ", PK" if column.primary_key else ""
     fks = [
         f"{fk.column.table.name}.{fk.column.name}" for fk in column.foreign_keys

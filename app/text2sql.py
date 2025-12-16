@@ -3,7 +3,7 @@ from typing import Any
 
 from langchain_gigachat import GigaChat
 from sqlalchemy import Result, text
-from tabulate import tabulate
+from sqlalchemy.exc import ProgrammingError
 
 from app.db import session_maker
 from app.prompts import PROMPT_TEMPLATE, SYSTEM_PROMPT
@@ -11,12 +11,9 @@ from app.render_db import db_schema
 from app.settings import settings
 from app.validate_sql import is_read_only_sql
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
-)
-
 logger = logging.getLogger(__name__)
+
+DEFAULT_ERROR_MESSAGE = "Произошла ошибка. Попробуйте ещё раз"
 
 llm = GigaChat(
     credentials=settings.GIGACHAT_API,
@@ -44,24 +41,13 @@ def ask_llm(question: str) -> str:
 
 
 def format_sqlalchemy_result(result: Result[Any]) -> str:
-    rows = result.fetchall()
-
-    if not rows:
-        return "(0 rows)\n"
-
-    column_names = result.keys()
-
-    table_data = [list(row) for row in rows]
-
-    return tabulate(
-        table_data,
-        headers=column_names,
-        tablefmt="grid",
-        showindex=False,
-    )
+    answer = result.one_or_none()
+    if answer is None or len(answer) != 1:
+        return DEFAULT_ERROR_MESSAGE
+    return str(answer[0])
 
 
-def text2sql(question: str):
+def text2sql(question: str) -> str:
     sql = ask_llm(question)
 
     logger.info("Generated SQL: %s", sql)
@@ -70,6 +56,9 @@ def text2sql(question: str):
         return "Произошла ошибка. Попробуйте ещё раз."
 
     session = session_maker()
-    records = session.execute(text(sql))
-    logger.info(f"Fetched {len(records.all())} rows from db")
+    try:
+        records = session.execute(text(sql))
+    except ProgrammingError:
+        return DEFAULT_ERROR_MESSAGE
+
     return format_sqlalchemy_result(records)

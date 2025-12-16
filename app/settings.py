@@ -6,7 +6,8 @@ class Settings(BaseSettings):
         env_file=".env", env_file_encoding="utf-8"
     )
 
+    BOT_TOKEN: str
     GIGACHAT_API: str
 
 
-settings = Settings()
+settings = Settings()  # type: ignore[call-arg]

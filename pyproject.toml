@@ -1,0 +1,124 @@
+[project]
+name = "text-to-video-analytics"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "aiogram>=3.23.0",
+    "langchain-gigachat>=0.3.12",
+    "mypy>=1.19.0",
+    "psycopg2-binary>=2.9.11",
+    "pydantic-settings>=2.12.0",
+    "pytest>=9.0.2",
+    "ruff>=0.14.9",
+    "sqlalchemy>=2.0.45",
+    "sqlglot>=28.3.0",
+    "tabulate>=0.9.0",
+]
+
+
+[tool.mypy]
+exclude = 'venv|.venv|env|.env'
+ignore_missing_imports = true
+strict = true
+strict_optional = true
+warn_unused_configs = true
+warn_redundant_casts = true
+check_untyped_defs = true
+no_implicit_optional = true
+follow_imports = "silent"
+disallow_untyped_defs = true
+disallow_untyped_calls = true
+disallow_incomplete_defs = true
+local_partial_types = true
+strict_bytes = true
+allow_redefinition = true
+warn_unreachable = true
+
+
+[tool.ruff]
+preview = true
+line-length = 80
+
+[tool.ruff.lint]
+select = [
+  "ERA",  # eradicate
+  "ASYNC",# flake8-async
+  "S",    # flake8-bandit
+  "BLE",  # flake8-blind-except
+  "FBT",  # flake8-boolean-trap
+  "B",    # flake8-bugbear
+  "A",    # flake8-builtins
+  "C4",   # flake8-comprehensions
+  "DTZ",  # flake8-datetimez
+  "FIX",  # flake8-fixme
+  "ISC",  # flake8-implicit-str-concat
+  "ICN",  # flake8-import-conventions
+  "LOG",  # flake8-logging
+  "INP",  # flake8-no-pep420
+  "PIE",  # flake8-pie
+  "T20",  # flake8-print
+  "PYI",  # flake8-pyi
+  "PT",   # flake8-pytest-style
+  "Q",    # flake8-quotes
+  "RSE",  # flake8-raise
+  "RET",  # flake8-return
+  "SLF",  # flake8-self
+  "SIM",  # flake8-simplify
+  "SLOT", # flake8-slots
+  "TID",  # flake8-tidy-imports
+  "TC",   # flake8-type-checking
+  "ARG",  # flake8-unused-arguments
+  "PTH",  # flake8-use-pathlib
+  "FLY",  # flynt
+  "I",    # isort
+  "C90",  # mccabe
+  "PERF", # Perflint
+  "E",    # pycodestyle
+  "W",    # pycodestyle
+  "D",    # pydocstyle
+  "F",    # Pyflakes
+  "PGH",  # pygrep-hooks
+  "PL",   # pylint
+  "PLE",  # pylint
+  "PLR",  # pylint
+  "PLW",  # pylint
+  "UP",   # pyupgrade
+  "RUF",  # Ruff-specific rules
+]
+ignore = [
+  "N815",   # Разрешить camelCase
+  "RUF001", # String contains ambiguous
+  "RUF002", # String contains ambiguous
+  "RUF003", # String contains ambiguous
+  "D100",   # Missing docstring
+  "D101",   # Missing docstring
+  "D102",   # Missing docstring
+  "D103",   # Missing docstring
+  "D104",   # Missing docstring
+  "D105",   # Missing docstring
+  "D106",   # Missing docstring
+  "D107",   # Missing docstring
+  "D203",   # 1 blank line required before class docstring
+  "D212",   # Multi-line docstring shoud start at first line
+]
+
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["E402"]
+"**/{tests}/*" = [
+  "INP",      # flake8-no-pep420
+  "E402",
+  "S101",
+  "PLR2004",
+  "ARG001",
+  "PLC0415",
+  "PLR0917",  # Too many positional arguments
+  "PLR0913"   # Too many arguments in function definition
+]
+
+
+[tool.pytest.ini_options]
+pythonpath = [".", "app"]
+testpaths = "tests"

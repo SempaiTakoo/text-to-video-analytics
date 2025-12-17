@@ -7,7 +7,10 @@ from aiogram.enums import ParseMode
 from aiogram.filters import CommandStart
 
 from app.settings import settings
-from app.text2sql import text2sql
+from app.text2sql import (
+    fetch_and_format_aggregate_result,
+    text_to_simpte_aggregate_sql,
+)
 
 dp = Dispatcher()
 
@@ -26,10 +29,14 @@ async def start_handler(message: types.Message) -> None:
 
 @dp.message()
 async def echo(message: types.Message) -> None:
+    if message.text is None:
+        await message.answer("Некорректное сообщение. Попробуйте ещё раз")
+        return
+
     await message.answer(
-        text2sql(message.text)
-        if message.text is not None
-        else "Некорректное сообщение. Попробуйте ещё раз"
+        fetch_and_format_aggregate_result(
+            text_to_simpte_aggregate_sql(message.text)
+        )
     )
 
 

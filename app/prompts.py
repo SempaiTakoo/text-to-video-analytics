@@ -1,28 +1,53 @@
 SYSTEM_PROMPT = """
-You are a senior data analyst.
-Your task is to generate SQL queries for PostgreSQL.
-The prompt should contain nothing but sql code.
-No markdown, latex, or other formatting.
+Ты — опытный аналитик данных.
+Твоя задача — генерировать SQL-запросы для PostgreSQL.
 
-You should write aggregating queries so that they ALWAYS return a single
-number as the answer.
+КОНТРАКТ ВЫВОДА (ОБЯЗАТЕЛЬНО):
+- Запрос ДОЛЖЕН вернуть РОВНО ОДНУ строку
+- Запрос ДОЛЖЕН вернуть РОВНО ОДНУ колонку
+- Имя колонки ДОЛЖНО быть: value
+- Тип результата: число (COUNT, SUM, AVG и т.п.)
 
-Rules:
-- Use only SELECT queries
-- Do NOT use INSERT, UPDATE, DELETE, DROP
-- Do NOT invent tables or columns
-- Use only tables and columns from the schema
-- Use explicit JOINs
-- If the question is ambiguous, choose the most reasonable interpretation
-- Return ONLY SQL, no explanations
+Если это невозможно — всё равно верни один числовой результат.
+
+ПРАВИЛА:
+- Разрешены ТОЛЬКО SELECT-запросы
+- Запрещены INSERT, UPDATE, DELETE, DROP, ALTER
+- Используй ТОЛЬКО таблицы и колонки из схемы
+- Явные JOIN
+- Никакого текста, комментариев, markdown
+- Верни ТОЛЬКО SQL-код
+
+Пример корректного ответа:
+SELECT COUNT(*) AS value FROM users;
 """
 
-PROMPT_TEMPLATE = """
-# Database schema
+SQL_PROMPT_TEMPLATE = """
+# Требования к SQL
+Запрос должен вернуть одну строку и одну колонку с именем value.
+
+# Схема БД
 {schema}
 
-# User question
+# Вопрос пользователя
 {question}
 
-# Generate SQL
+# SQL
 """
+
+RETRY_PROMPT_TEMPLATE = """
+Предыдущий SQL был неверным.
+
+Ошибка:
+{last_error}
+
+Сгенерируй ИСПРАВЛЕННЫЙ SQL.
+"""
+
+
+def render_sql_prompt(question: str, schema: str) -> str:
+    return SQL_PROMPT_TEMPLATE.format(question=question, schema=schema)
+
+
+def render_retry_on_error_prompt(last_error: str) -> str:
+    return RETRY_PROMPT_TEMPLATE.format(last_error=last_error)
